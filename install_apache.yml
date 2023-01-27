@@ -8,8 +8,17 @@
       name: apache2
       update_cache: yes
       state: latest
+    when: ansible_distribution == "Ubuntu"
       
   - name: start the apache service
     service:
       name: apache2
       state: started 
+    when: ansible_distribution == "Ubuntu"
+   
+  - name: install httpd in centos
+    yum: 
+      name: httpd
+      update_cache: yes
+      state: latest
+    when: ansible_distribution == "CentOS"
