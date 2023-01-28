@@ -1,0 +1,46 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+  - name: update apt chache 
+    tags: always
+    apt:
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: update rpm chache
+    tags: always
+    yum:
+      update_cache: yes 
+    when: ansible_distribution == "CentOS"
+
+- hosts: webservers
+  become: true
+  tasks:
+  - name: install apache and telnet on webservers
+    tags: ubuntu,webserver
+    package:
+      name: 
+        - apache2
+        - telnet
+    when: ansible_distribution == "Ubuntu" 
+
+  - name: copy a content to default index file
+    tags: ubuntu_web
+    when: ansible_distribution == "Ubuntu"
+    copy: 
+      src: default_index.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644 
+
+  - name: install apache and telnet on Centos
+    tags: centos,webserver
+    package:
+      name:
+        - httpd
+        - telnet
+      state: latest
+    when: ansible_distribution == "CentOS"
